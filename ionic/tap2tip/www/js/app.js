@@ -1,4 +1,9 @@
 var tag = {};
+var NFCtagId="";
+
+function bin2String(array) {
+  return String.fromCharCode.apply(String, array);
+}
 
 angular.module('T2TApp', ['ionic', 'nfcFilters','ngCordova'])
 .controller("MainCtrl",function ($scope, nfcService, $state){
@@ -6,8 +11,8 @@ angular.module('T2TApp', ['ionic', 'nfcFilters','ngCordova'])
   console.log("Main Controller says: Hello World");
 })
 .controller("ArtistCtrl",function($scope, $ionicPopup, $state, $http){
-  if (tag.id == null){
-    tag.id="12345"
+  if (NFCtagId == ""){
+    NFCtagId="12345"
   }
 
   //alert(tag.id);
@@ -18,9 +23,10 @@ angular.module('T2TApp', ['ionic', 'nfcFilters','ngCordova'])
   artist.description="...";
   artist.followers="...";
   artist.rating="...";
+  artist.pictureUrl="#";
 
 
-  $http.get("https://3dwrnlwk97.execute-api.us-east-1.amazonaws.com/dev/artist/"+tag.id)
+  $http.get("https://3dwrnlwk97.execute-api.us-east-1.amazonaws.com/dev/artist/"+NFCtagId)
     .then(
       function successCall(res){
         console.log(JSON.stringify(res, null, 4));
@@ -30,6 +36,7 @@ angular.module('T2TApp', ['ionic', 'nfcFilters','ngCordova'])
         artist.description=baseProfile.description.S;
         artist.followers=baseProfile.followers.N;
         artist.rating=baseProfile.rating.N;
+        artist.pictureUrl=baseProfile.pictureUrl.S;
       },
       function errorCall(res){
         console.log("There was an error retrieving the artist's tag")
@@ -91,9 +98,11 @@ angular.module('T2TApp', ['ionic', 'nfcFilters','ngCordova'])
     $ionicPlatform.ready(function() {
       nfc.addNdefListener(function (nfcEvent) {
           console.log(JSON.stringify(nfcEvent.tag, null, 4));
+          NFCtagId=bin2String(nfcEvent.tag.ndefMessage[0].payload).substring(3);
+
           $rootScope.$apply(function(){
               angular.copy(nfcEvent.tag, tag);
-              alert("Looking for artist info " + tag.id);
+              alert("Looking for artist info " + NFCtagId);
               $state.go("artistprofile")
           });
       }, function () {
