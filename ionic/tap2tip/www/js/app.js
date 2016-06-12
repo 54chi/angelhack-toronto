@@ -6,6 +6,10 @@ angular.module('T2TApp', ['ionic', 'nfcFilters','ngCordova'])
   console.log("Main Controller says: Hello World");
 })
 .controller("ArtistCtrl",function($scope, $ionicPopup, $state, $http){
+  if (tag.id == null){
+    tag.id="12345"
+  }
+
   //alert(tag.id);
   var artist = {};
   $scope.artist= artist;
@@ -16,7 +20,7 @@ angular.module('T2TApp', ['ionic', 'nfcFilters','ngCordova'])
   artist.rating="...";
 
 
-  $http.get("https://3dwrnlwk97.execute-api.us-east-1.amazonaws.com/dev/artist/12345")
+  $http.get("https://3dwrnlwk97.execute-api.us-east-1.amazonaws.com/dev/artist/"+tag.id)
     .then(
       function successCall(res){
         console.log(JSON.stringify(res, null, 4));
@@ -31,11 +35,6 @@ angular.module('T2TApp', ['ionic', 'nfcFilters','ngCordova'])
         console.log("There was an error retrieving the artist's tag")
       }
   );
-
-
-
-  //$http.defaults.useXDomain = true;
-  //delete $http.defaults.headers.common['X-Requested-With'];
 
   $scope.confirmationAlert = function() {
      var alertPopup = $ionicPopup.confirm({
@@ -53,9 +52,38 @@ angular.module('T2TApp', ['ionic', 'nfcFilters','ngCordova'])
    };
   console.log("Artist Controller says: Hello World");
 })
-.controller("ConfirmCtrl",function(){
-  console.log("Confirmation Controller says: Hello World");
+.controller("ConfirmCtrl",function($scope,$ionicPopup, $state){
+  $scope.starRating = 4;
+  $scope.hoverRating = 0;
+
+  $scope.click = function (param) {
+      console.log('Click');
+  };
+
+  $scope.mouseHover = function (param) {
+      console.log('mouseHover(' + param + ')');
+      $scope.hoverRating = param;
+  };
+
+  $scope.mouseLeave = function (param) {
+      console.log('mouseLeave(' + param + ')');
+      $scope.hoverRating = param + '*';
+  };
+
+  $scope.popupAlert = function() {
+     var alertPopup = $ionicPopup.alert({
+       title: 'Feedback sent',
+       template: 'Thanks again!'
+     });
+
+     alertPopup.then(function(res) {
+       //go back to home page
+       $state.go("main");
+     });
+   };
+   console.log("Confirmation Controller says: Hello World");
 })
+
 .controller("FeedbackCtrl",function(){
   console.log("Feedback Controller says: Hello World");
 })
@@ -81,6 +109,70 @@ angular.module('T2TApp', ['ionic', 'nfcFilters','ngCordova'])
       }
     };
 })
+.directive('starRating', function () {
+    return {
+        scope: {
+            rating: '=',
+            maxRating: '@',
+            readOnly: '@',
+            click: "&",
+            mouseHover: "&",
+            mouseLeave: "&"
+        },
+        restrict: 'EA',
+        template:
+            "<div style='display: inline-block; margin: 0px; padding: 0px; cursor:pointer;' ng-repeat='idx in maxRatings track by $index'> \
+                    <img ng-src='{{((hoverValue + _rating) <= $index) && \"http://www.codeproject.com/script/ratings/images/star-empty-lg.png\" || \"http://www.codeproject.com/script/ratings/images/star-fill-lg.png\"}}' \
+                    ng-Click='isolatedClick($index + 1)' \
+                    ng-mouseenter='isolatedMouseHover($index + 1)' \
+                    ng-mouseleave='isolatedMouseLeave($index + 1)'></img> \
+            </div>",
+        compile: function (element, attrs) {
+            if (!attrs.maxRating || (Number(attrs.maxRating) <= 0)) {
+                attrs.maxRating = '5';
+            };
+        },
+        controller: function ($scope, $element, $attrs) {
+            $scope.maxRatings = [];
+
+            for (var i = 1; i <= $scope.maxRating; i++) {
+                $scope.maxRatings.push({});
+            };
+
+            $scope._rating = $scope.rating;
+
+			$scope.isolatedClick = function (param) {
+				if ($scope.readOnly == 'true') return;
+
+				$scope.rating = $scope._rating = param;
+				$scope.hoverValue = 0;
+				$scope.click({
+					param: param
+				});
+			};
+
+			$scope.isolatedMouseHover = function (param) {
+				if ($scope.readOnly == 'true') return;
+
+				$scope._rating = 0;
+				$scope.hoverValue = param;
+				$scope.mouseHover({
+					param: param
+				});
+			};
+
+			$scope.isolatedMouseLeave = function (param) {
+				if ($scope.readOnly == 'true') return;
+
+				$scope._rating = $scope.rating;
+				$scope.hoverValue = 0;
+				$scope.mouseLeave({
+					param: param
+				});
+			};
+        }
+    };
+})
 .config(function($stateProvider, $urlRouterProvider){
   //basic navigation
   $stateProvider
@@ -90,109 +182,16 @@ angular.module('T2TApp', ['ionic', 'nfcFilters','ngCordova'])
     templateUrl: "templates/main.html",
     controller: 'MainCtrl'
   })
-
   .state('artistprofile', {
     url: "/artistprofile",
     templateUrl: "templates/artistprofile.html",
     controller: 'ArtistCtrl'
   })
-
   .state('confirmation', {
     url: "/confirmation",
     templateUrl: "templates/confirmation.html",
     controller: 'ConfirmCtrl'
-  })
-
-  .state('feedback', {
-    url: "/feedback",
-    templateUrl: "templates/feedback.html",
-    controller: 'FeedbackCtrl'
-  })
-
+  });
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/main');
 });
-
-
-/*
-    .controller('T2TController', function($scope, $ionicModal){
-      // Create and load the Modal
-        $ionicModal.fromTemplateUrl('viewProfile.html', function(modal) {
-          $scope.viewProfile = modal;
-        }, {
-          scope: $scope,
-          animation: 'slide-in-up'
-        });
-
-        $scope.viewProfile = function() {
-          $scope.viewProfile.show();
-        };
-
-
-      }
-    )
-
-    .controller('MapController', function($scope, $cordovaGeolocation, $ionicPlatform) {
-      $ionicPlatform.ready(function() {
-          var posOptions = {
-              enableHighAccuracy: true,
-              timeout: 20000,
-              maximumAge: 0
-          };
-
-          $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
-              var map={};
-              var lat  = position.coords.latitude;
-              var long = position.coords.longitude;
-              //alert("Lat: " + lat+ ", Long:"+ long);
-              map.lat=lat;
-              map.long=long;
-              $scope.map=map;
-            }, function(err) {
-              //$ionicLoading.hide();
-              console.log(err);
-            });
-      })
-    })
-
-
-
-    .controller('MainController', function ($scope, nfcService) {
-
-        $scope.tag = nfcService.tag;
-        $scope.clear = function() {
-            nfcService.clearTag();
-        };
-
-
-
-    })
-
-    .factory('nfcService', function ($rootScope, $ionicPlatform) {
-
-        var tag = {};
-
-        $ionicPlatform.ready(function() {
-            nfc.addNdefListener(function (nfcEvent) {
-                console.log(JSON.stringify(nfcEvent.tag, null, 4));
-                $rootScope.$apply(function(){
-                    angular.copy(nfcEvent.tag, tag);
-                    // if necessary $state.go('some-route')
-                });
-            }, function () {
-                console.log("Listening for NDEF Tags.");
-            }, function (reason) {
-                alert("Error adding NFC Listener " + reason);
-            });
-
-        });
-
-        return {
-            tag: tag,
-
-            clearTag: function () {
-                angular.copy({}, this.tag);
-            }
-        };
-    });
-*/
