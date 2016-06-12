@@ -1,10 +1,44 @@
-angular.module('T2TApp', ['ionic', 'nfcFilters','ngCordova'])
+var tag = {};
 
-.controller("MainCtrl",function(){
+angular.module('T2TApp', ['ionic', 'nfcFilters','ngCordova'])
+.controller("MainCtrl",function ($scope, nfcService, $state){
+  $scope.tag = nfcService.tag;
   console.log("Main Controller says: Hello World");
 })
-
+.controller("ArtistCtrl",function(){
+  alert(tag.id);
+  console.log("Artist Controller says: Hello World");
+})
+.controller("ConfirmCtrl",function(){
+  console.log("Confirmation Controller says: Hello World");
+})
+.controller("FeedbackCtrl",function(){
+  console.log("Feedback Controller says: Hello World");
+})
+.factory('nfcService', function ($rootScope, $ionicPlatform, $state) {
+    $ionicPlatform.ready(function() {
+      nfc.addNdefListener(function (nfcEvent) {
+          console.log(JSON.stringify(nfcEvent.tag, null, 4));
+          $rootScope.$apply(function(){
+              angular.copy(nfcEvent.tag, tag);
+              alert("Looking for artist info " + tag.id);
+              $state.go("artistprofile")
+          });
+      }, function () {
+          console.log("Listening for NDEF Tags.");
+      }, function (reason) {
+          alert("Error adding NFC Listener " + reason);
+      });
+    });
+    return {
+      tag: tag,
+      clearTag: function () {
+          angular.copy({}, this.tag);
+      }
+    };
+})
 .config(function($stateProvider, $urlRouterProvider){
+  //basic navigation
   $stateProvider
 
   .state('main', {
@@ -16,16 +50,19 @@ angular.module('T2TApp', ['ionic', 'nfcFilters','ngCordova'])
   .state('artistprofile', {
     url: "/artistprofile",
     templateUrl: "templates/artistprofile.html",
+    controller: 'ArtistCtrl'
   })
 
   .state('confirmation', {
     url: "/confirmation",
     templateUrl: "templates/confirmation.html",
+    controller: 'ConfirmCtrl'
   })
 
   .state('feedback', {
     url: "/feedback",
     templateUrl: "templates/feedback.html",
+    controller: 'FeedbackCtrl'
   })
 
 

@@ -25,7 +25,19 @@
       <h1 class="title">T2T2tTT</h1>
     </ion-header-bar>
     <ion-content class="padding">
-      <p>This is the page where David, Krizhan and Sabrina have been stucked for 12 hours :) <a href="#/artistprofile">Go to Page 2</a></p>
+
+      <div class="padding">
+
+      <ion-list class="padding">
+        <ion-radio ng-model="choice" ng-value="1">$1.00</ion-radio>
+        <ion-radio ng-model="choice" ng-value="2.50">$2.50</ion-radio>
+        <ion-radio ng-model="choice" ng-value="5">$5.00</ion-radio>
+        <ion-radio ng-model="choice" ng-value="10">$10.00</ion-radio>
+      </ion-list>
+</div>
+      <h1 class="title center">
+        Select the amount and then tap to tip to the tipping tag
+      </h1>
     </ion-content>
   </script>
 
