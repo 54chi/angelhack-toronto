@@ -1,6 +1,6 @@
 
 # Tap To Tip to the Tipping Tag
-## AH9 Toronto 
+## AH9 Toronto
 
 A social media app to rate and discover hidden talent.
 Plus, tipping them using your phone and learn more about the busking community.
@@ -14,12 +14,12 @@ Plus, tipping them using your phone and learn more about the busking community.
 
 # Screenshots/Application flow:
 
-![alt text](/screenshots/screen1.png)
-![alt text](/screenshots/screen2.png)
-![alt text](/screenshots/screen3.png)
-![alt text](/screenshots/screen4.png)
-![alt text](/screenshots/screen5.png)
-![alt text](/screenshots/screen6.png)
+![alt text](https://raw.githubusercontent.com/54chi/angelhack-toronto/master/ionic/tap2tip/screenshots/screen1.png)
+![alt text](https://raw.githubusercontent.com/54chi/angelhack-toronto/master/ionic/tap2tip/screenshots/screen2.png)
+![alt text](https://raw.githubusercontent.com/54chi/angelhack-toronto/master/ionic/tap2tip/screenshots/screen3.png)
+![alt text](https://raw.githubusercontent.com/54chi/angelhack-toronto/master/ionic/tap2tip/screenshots/screen4.png)
+![alt text](https://raw.githubusercontent.com/54chi/angelhack-toronto/master/ionic/tap2tip/screenshots/screen5.png)
+![alt text](https://raw.githubusercontent.com/54chi/angelhack-toronto/master/ionic/tap2tip/screenshots/screen6.png)
 
 # Technologies used:
 
