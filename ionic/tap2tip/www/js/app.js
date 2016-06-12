@@ -5,8 +5,23 @@ angular.module('T2TApp', ['ionic', 'nfcFilters','ngCordova'])
   $scope.tag = nfcService.tag;
   console.log("Main Controller says: Hello World");
 })
-.controller("ArtistCtrl",function(){
-  alert(tag.id);
+.controller("ArtistCtrl",function($scope, $ionicPopup, $state){
+  //alert(tag.id);
+
+  $scope.confirmationAlert = function() {
+     var alertPopup = $ionicPopup.confirm({
+       title: 'Tip Artist',
+       template: 'Are you sure you want to tip Artist?'
+     });
+
+     alertPopup.then(function(res) {
+       if (res) {
+         $state.go("confirmation");
+       } else {
+         $state.go("main");
+       }
+     });
+   };
   console.log("Artist Controller says: Hello World");
 })
 .controller("ConfirmCtrl",function(){
