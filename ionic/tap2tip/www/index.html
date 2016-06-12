@@ -51,19 +51,17 @@
 
         <div class="item item-avatar">
           <img src="https://randomuser.me/api/portraits/women/67.jpg">
-          <h2>Inna Corman</h2>
-          <p>Musician</p>
+          <h2>{{artist.name}}</h2>
+          <p>{{artist.title}}</p>
         </div>
 
         <div class="item item-body">
           <p>
-            "Never gonna give you up,
-            never gonna let you down,
-            never gonna run around and desert you..."
+            {{artist.description}}
           </p>
           <p>
-            <a class="subdued"><i class="icon ion-star"></i> 4.50 stars </a>
-            <a class="subdued">23 followers</a>
+            <a class="subdued"><i class="icon ion-star"></i> {{artist.rating}} stars </a>
+            <a class="subdued">{{artist.followers}} followers</a>
           </p>
         </div>
       </div>

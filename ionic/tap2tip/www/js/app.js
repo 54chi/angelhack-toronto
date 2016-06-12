@@ -5,8 +5,37 @@ angular.module('T2TApp', ['ionic', 'nfcFilters','ngCordova'])
   $scope.tag = nfcService.tag;
   console.log("Main Controller says: Hello World");
 })
-.controller("ArtistCtrl",function($scope, $ionicPopup, $state){
+.controller("ArtistCtrl",function($scope, $ionicPopup, $state, $http){
   //alert(tag.id);
+  var artist = {};
+  $scope.artist= artist;
+  artist.name="...";
+  artist.title="...";
+  artist.description="...";
+  artist.followers="...";
+  artist.rating="...";
+
+
+  $http.get("https://3dwrnlwk97.execute-api.us-east-1.amazonaws.com/dev/artist/12345")
+    .then(
+      function successCall(res){
+        console.log(JSON.stringify(res, null, 4));
+        var baseProfile=res.data.Item.profile.M;
+        artist.name=baseProfile.username.S;
+        artist.title=baseProfile.title.S;
+        artist.description=baseProfile.description.S;
+        artist.followers=baseProfile.followers.N;
+        artist.rating=baseProfile.rating.N;
+      },
+      function errorCall(res){
+        console.log("There was an error retrieving the artist's tag")
+      }
+  );
+
+
+
+  //$http.defaults.useXDomain = true;
+  //delete $http.defaults.headers.common['X-Requested-With'];
 
   $scope.confirmationAlert = function() {
      var alertPopup = $ionicPopup.confirm({
@@ -79,8 +108,6 @@ angular.module('T2TApp', ['ionic', 'nfcFilters','ngCordova'])
     templateUrl: "templates/feedback.html",
     controller: 'FeedbackCtrl'
   })
-
-
 
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/main');
